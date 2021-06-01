@@ -128,7 +128,8 @@ class  LoginActivity : AppCompatActivity() {
                         Log.d(TAG, "user is null.")
                     }
                 } else {
-
+                    Log.d(TAG, "there is no such a user.")
+                    Log.d(TAG, "there is no such a userd.")
                 }
             }
     }
