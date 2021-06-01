@@ -2,7 +2,6 @@ package com.hera.chatapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -35,9 +34,7 @@ class PasswordRecoveryActivity : AppCompatActivity() {
 
         // On rec btn click.
         recBtn.setOnClickListener {
-            Log.d(TAG, "recovery button was clicked.")
             val email = emailEt.text.toString()
-            Log.d(TAG, "Email: $email")
             if (validate(email)) {
                 sendPasswordResetEmail(email)
             }
@@ -45,9 +42,7 @@ class PasswordRecoveryActivity : AppCompatActivity() {
 
         // On login tv click.
         loginTv.setOnClickListener {
-            Log.d(TAG, "login tv was clicked.")
             finish()
-            Log.d(TAG, "PasswordRecoveryActivity is popped out from the back stack, user is in LoginActivity.")
         }
     }
 
@@ -56,19 +51,15 @@ class PasswordRecoveryActivity : AppCompatActivity() {
      */
     private fun validate(email: String): Boolean {
         var isValid = true
-        Log.d(TAG, "validation started.")
         when {
             email.isEmpty() -> {
                 isValid = false
                 emailEt.error = "empty"
-                Log.d(TAG, "email is empty.")
             }
             else -> {
                 emailEt.error = null
-                Log.d(TAG, "email is valid.")
             }
         }
-        Log.d(TAG, "isValid = $isValid")
         return isValid
     }
 
@@ -76,20 +67,12 @@ class PasswordRecoveryActivity : AppCompatActivity() {
      * Send Password Reset Email.
      */
     private fun sendPasswordResetEmail(email: String) {
-        Log.d(TAG, "send password reset fun started.")
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "password recovery letter was sent.")
                     finish()
-                    Log.d(TAG, "PasswordRecoveryActivity is popped out from the back stack, user is in LoginActivity.")
                 } else {
-                    Log.d(TAG, "password is not sent.")
                 }
             }
-    }
-
-    companion object {
-        const val TAG = "PasswordRecovery"
     }
 }

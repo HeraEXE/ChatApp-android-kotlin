@@ -3,7 +3,6 @@ package com.hera.chatapp
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -13,7 +12,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import de.hdodenhof.circleimageview.CircleImageView
-import java.util.regex.Pattern
 
 /**
  * Registration Activity.
@@ -56,29 +54,21 @@ class RegistrationActivity : AppCompatActivity() {
 
         // On edit img click.
         editImg.setOnClickListener {
-            Log.d(TAG, "edit img was clicked.")
             setProfileImg()
         }
 
         // On profile img click.
         profileImg.setOnClickListener {
-            Log.d(TAG, "profile img was clicked.")
             setProfileImg()
         }
 
         // On reg btn click.
         regBtn.setOnClickListener {
-            Log.d(TAG, "registration button was clicked.")
             val username = usernameEt.text.toString()
-            Log.d(TAG, "Username: $username")
             val email = emailEt.text.toString()
-            Log.d(TAG, "Email: $email")
             val password = passwordEt.text.toString()
-            Log.d(TAG, "Password: $password")
             val confirmPassword = confirmPasswordEt.text.toString()
-            Log.d(TAG, "Confirm Password: $confirmPassword")
             val isValid = validate(username, email, password, confirmPassword)
-            Log.d(TAG, "isValid = $isValid")
             if (isValid) {
                 regBtn.visibility = View.INVISIBLE
                 progressBar.visibility = View.VISIBLE
@@ -88,7 +78,6 @@ class RegistrationActivity : AppCompatActivity() {
 
         // On login tv click.
         loginTv.setOnClickListener {
-            Log.d(TAG, "login tv was clicked.")
             startLoginActivity()
         }
     }
@@ -98,16 +87,13 @@ class RegistrationActivity : AppCompatActivity() {
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "on activity result function has started.")
         if (requestCode == GET_IMAGE) {
             if (data != null) {
                 val image = data.data.toString()
-                Log.d(TAG, "Image = $image")
                 Glide.with(this)
                     .load(image)
                     .error(R.drawable.ic_launcher_background)
                     .into(profileImg)
-                Log.d(TAG, "Image has been loaded to profileImg view.")
             }
         }
     }
@@ -119,23 +105,19 @@ class RegistrationActivity : AppCompatActivity() {
                          email: String,
                          password: String,
                          confirmPassword: String): Boolean {
-        Log.d(TAG, "validation started.")
         var isValid = true
         // username validation.
         when {
             username.isEmpty() -> {
                 isValid = false
                 usernameEt.error = "empty"
-                Log.d(TAG, "username is empty.")
             }
             username.length > 30 -> {
                 isValid = false
                 usernameEt.error = "username is too long"
-                Log.d(TAG, "username is too long.")
             }
             else -> {
                 usernameEt.error = null
-                Log.d(TAG, "username is valid.")
             }
         }
         // email validation.
@@ -143,7 +125,6 @@ class RegistrationActivity : AppCompatActivity() {
             email.isEmpty() -> {
                 isValid = false
                 emailEt.error = "empty"
-                Log.d(TAG, "email is empty.")
             }
 //            Pattern.matches(".+@.+", email) -> {
 //                isValid = false
@@ -152,7 +133,6 @@ class RegistrationActivity : AppCompatActivity() {
 //            }
             else -> {
                 emailEt.error = null
-                Log.d(TAG, "email is valid.")
             }
         }
         // password validation.
@@ -160,16 +140,13 @@ class RegistrationActivity : AppCompatActivity() {
             password.isEmpty() -> {
                 isValid = false
                 passwordEt.error = "empty"
-                Log.d(TAG, "password is empty.")
             }
             password.length < 6 -> {
                 isValid = false
                 passwordEt.error = "password is too weak"
-                Log.d(TAG, "password length is < 6")
             }
             else -> {
                 passwordEt.error = null
-                Log.d(TAG, "password is valid.")
             }
         }
         // confirm password validation.
@@ -177,11 +154,9 @@ class RegistrationActivity : AppCompatActivity() {
             confirmPassword != password -> {
                 isValid = false
                 confirmPasswordEt.error = "passwords do not match"
-                Log.d(TAG, "confirm password is not equal to password.")
             }
             else -> {
                 confirmPasswordEt.error = null
-                Log.d(TAG, "confirm password is valid.")
             }
         }
         return isValid
@@ -191,33 +166,25 @@ class RegistrationActivity : AppCompatActivity() {
      * Set Profile Img.
      */
     private fun setProfileImg() {
-        Log.d(TAG, "set profile img fun was called.")
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(intent, "Choose App"), GET_IMAGE)
-        Log.d(TAG, "starts activity for result to get an image.")
     }
 
     /**
      * Create User With Email And Password.
      */
     private fun createUserWithEmailAndPassword(email: String, password: String) {
-        Log.d(TAG, "create user with email and password function was called.")
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
-                    Log.d(TAG, "creating user.")
                     if (task.isSuccessful) {
-                        Log.d(TAG, "user is created successfully.")
                         val user = auth.currentUser
                         if (user != null) {
                             sendEmailVerification(user)
-                            Log.d(TAG, "user is not null.")
                         } else {
-                            Log.d(TAG, "user is null.")
                         }
                     } else {
-                        Log.d(TAG, "user is not created.")
                     }
                 }
         regBtn.visibility = View.VISIBLE
@@ -228,15 +195,12 @@ class RegistrationActivity : AppCompatActivity() {
      * Send Email Verification.
      */
     private fun sendEmailVerification(user: FirebaseUser) {
-        Log.d(TAG, "send email verification function called.")
         user.sendEmailVerification()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d(TAG, "email verification letter has been sent.")
                         // should send alert.
                         startLoginActivity()
                     } else {
-                        Log.d(TAG, "email verification failed.")
                     }
                 }
     }
@@ -245,22 +209,18 @@ class RegistrationActivity : AppCompatActivity() {
      * Start Login Activity.
      */
     private fun startLoginActivity() {
-        Log.d(TAG, "start login activity function was called.")
         finish()
-        Log.d(TAG, "Registration Activity was popped out from the back stack.")
     }
 
     /**
      * Email Verification Alert.
      */
     private fun emailVerificationAlert(user: FirebaseUser) {
-        Log.d(TAG, "email verification alert fun has called.")
         AlertDialog.Builder(applicationContext)
                 .setMessage("We have sent email verification letter to ${user.email}." +
                         "Please verify your email.")
                 .setCancelable(false)
                 .setPositiveButton("OK") { dialog, which ->
-                    Log.d(TAG, "user has been alerted about email verification.")
                     dialog.dismiss()
                     startLoginActivity()
                 }
@@ -269,7 +229,6 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "RegistrationActivity"
         const val GET_IMAGE = 4365
     }
 }
